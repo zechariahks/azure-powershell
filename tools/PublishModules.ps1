@@ -104,13 +104,9 @@ function Get-Directories {
     )
 
     PROCESS {
-        $packageFolder = "$PSScriptRoot\..\src\Package"
+        $packageFolder = "$PSScriptRoot\..\artifacts"
 
-        if ($Scope -eq "Stack") {
-            $packageFolder = "$PSScriptRoot\..\src\Stack"
-        }
-
-        $resourceManagerRootFolder = "$packageFolder\$buildConfig\ResourceManager\AzureResourceManager"
+        $resourceManagerRootFolder = "$packageFolder\$buildConfig"
 
         Write-Output -InputObject $packageFolder, $resourceManagerRootFolder
     }
@@ -414,7 +410,8 @@ function Update-NugetPackage {
         $content = $content -replace $regex2, ("<requireLicenseAcceptance>true</requireLicenseAcceptance>")
         Out-FileNoBom -File (Join-Path (Get-Location) $modulePath) -Text $content
 
-        &$NugetExe pack $modulePath -OutputDirectory $TempRepoPath
+        # https://stackoverflow.com/a/36369540/294804
+        &$NugetExe pack $modulePath -OutputDirectory $TempRepoPath -NoPackageAnalysis
     }
 }
 
@@ -859,7 +856,7 @@ Get-PackageProvider -Name NuGet -Force
 Write-Host " "
 
 # NOTE: Can only be Azure or Azure Stack, not both.
-$packageFolder = "$PSScriptRoot\..\src\Package"
+$packageFolder = "$PSScriptRoot\..\artifacts"
 if ($Scope -eq 'Stack') {
     $packageFolder = "$PSScriptRoot\..\src\Stack"
 }
@@ -870,10 +867,11 @@ if ($PublishLocal) {
     if ($Scope -eq 'Stack') {
         $tempRepoPath = (Join-Path $repositoryLocation -ChildPath "Stack")
     } else {
-        $tempRepoPath = (Join-Path $repositoryLocation -ChildPath "Package")
+        $tempRepoPath = (Join-Path $repositoryLocation -ChildPath "..\artifacts")
     }
 }
 
+$null = New-Item -ItemType Directory -Force -Path $tempRepoPath
 $tempRepoName = ([System.Guid]::NewGuid()).ToString()
 $repo = Get-PSRepository | Where-Object { $_.SourceLocation -eq $tempRepoPath }
 if ($repo -ne $null) {

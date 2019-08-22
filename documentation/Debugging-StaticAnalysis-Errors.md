@@ -12,16 +12,16 @@ Our StaticAnalysis tools help us ensure our modules follow PowerShell guidelines
 ## How to know if you have a StaticAnalysis Error
 If your build is failing, click on the Jenkins job inside the PR (marked as "Default" within checks).  Then check the Console Output within the Jenkins job.  If you have this error, then you have failed StaticAnalysis:
 ```
-d:\workspace\powershell\build.proj(511,5): error MSB3073: The command "d:\workspace\powershell\src\Package\StaticAnalysis.exe d:\workspace\powershell\src\Package\Debug d:\workspace\powershell\src\Package true false" exited with code 255.
+d:\workspace\powershell\build.proj(511,5): error MSB3073: The command "d:\workspace\powershell\artifacts\StaticAnalysis.exe d:\workspace\powershell\artifacts\Debug d:\workspace\powershell\artifacts true false" exited with code 255.
 ```
 
 ## Where to find StaticAnalysis reports
 
 The StaticAnalysis reports could show up in two different places in the CI build:
 - On the status page in Jenkins, under the Build Artifacts: the relevant files are `BreakingChangeIssues.csv`, `SignatureIssues.csv`, and/or `HelpIssues.csv`.
-- On the status page in Jenkins, click Build Artifacts then navigate to src/Package.  You will see `BreakingChangeIssues.csv`, `SignatureIssues.csv`, and/or `HelpIssues.csv`.
+- On the status page in Jenkins, click Build Artifacts then navigate to artifacts.  You will see `BreakingChangeIssues.csv`, `SignatureIssues.csv`, and/or `HelpIssues.csv`.
 
-Locally, the StaticAnalysis report will show up under Azure-PowerShell/src/Package. You will see `BreakingChangeIssues.csv`, `SignatureIssues.csv`, and/or `HelpIssues.csv`.  You can generate these files by running
+Locally, the StaticAnalysis report will show up under Azure-PowerShell/artifacts. You will see `BreakingChangeIssues.csv`, `SignatureIssues.csv`, and/or `HelpIssues.csv`.  You can generate these files by running
 ```
 msbuild build.proj
 ```
@@ -42,7 +42,7 @@ _Note_: Sometimes the error listed in the .csv file can be a false positive (for
 We take breaking changes very seriously, so please be mindful about the violations that you suppress in our repo.
 
 ### Signature Issues
-Signature issues occur when your cmdlets do not follow PowerShell standards.  Please check [this page](https://github.com/Azure/azure-powershell/blob/master/documentation/development-docs/azure-powershell-design-guidelines.md) to ensure you are following PowerShell guidelines.  Issues with severity 0 or 1 must be addressed, while issues with severity 2 are advisory.  If you have an issue with severity 0 or 1 that has been approved by the Azure PowerShell team, you can suppress them following these steps:
+Signature issues occur when your cmdlets do not follow PowerShell standards.  Please check the [_Cmdlet Best Practices_](https://github.com/Azure/azure-powershell/blob/master/documentation/development-docs/design-guidelines/cmdlet-best-practices.md) and the [_Parameter Best Practices_](https://github.com/Azure/azure-powershell/blob/master/documentation/development-docs/design-guidelines/parameter-best-practices.md) documents to ensure you are following PowerShell guidelines.  Issues with severity 0 or 1 must be addressed, while issues with severity 2 are advisory.  If you have an issue with severity 0 or 1 that has been approved by the Azure PowerShell team, you can suppress them following these steps:
 
 - Download the `SignatureIssues.csv` file from the Jenkins build
 - Open the file using a text editor (such as VS Code) and copy each of the errors you'd like to suppress
